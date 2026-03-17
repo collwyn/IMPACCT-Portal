@@ -9,7 +9,8 @@ import {
   Building2, 
   LogOut,
   FolderPlus,
-  MessageSquare
+  MessageSquare,
+  HelpCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useListMessages } from "@workspace/api-client-react";
@@ -118,6 +119,13 @@ export function Sidebar() {
           <p className="text-sm font-medium text-sidebar-foreground truncate">{user?.name}</p>
           <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
         </div>
+        <button
+          onClick={() => window.dispatchEvent(new CustomEvent("open-onboarding-tour"))}
+          className="flex w-full items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors mb-1"
+        >
+          <HelpCircle className="w-5 h-5" />
+          Take the Tour
+        </button>
         <button
           onClick={logout}
           className="flex w-full items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-destructive hover:bg-destructive/10 transition-colors"
