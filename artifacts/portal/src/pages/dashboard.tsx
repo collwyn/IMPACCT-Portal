@@ -29,62 +29,69 @@ export default function Dashboard() {
         
         {/* LEFT COLUMN: Profile & Team */}
         <div className="space-y-6">
-          {/* Profile Card */}
-          <div className="bg-primary/5 border border-primary/10 rounded-2xl p-8 flex flex-col items-center text-center shadow-sm">
-            <img 
-              src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(user?.name || 'User')}`} 
-              alt={user?.name}
-              className="w-32 h-32 rounded-full bg-white shadow-sm mb-4"
-            />
-            <h2 className="text-2xl font-display font-bold text-foreground">{user?.name}</h2>
-            <p className="text-muted-foreground font-medium mt-1 capitalize">{user?.job_title || user?.role.replace('_', ' ')}</p>
-            <p className="text-sm text-muted-foreground mt-1">{userDepartmentName}</p>
-            
-            <button 
-              onClick={() => setLocation('/messages')}
-              className="mt-6 flex items-center justify-center w-full gap-2 bg-primary hover:bg-primary/90 text-primary-foreground py-2.5 px-4 rounded-xl font-medium transition-colors shadow-sm"
-            >
-              <MessageSquare className="w-4 h-4" />
-              View Messages
-            </button>
+          {/* Profile Card — photo fills top half */}
+          <div className="bg-card border border-border/50 rounded-2xl overflow-hidden shadow-sm">
+            <div className="relative h-48 w-full overflow-hidden">
+              <img 
+                src={`https://i.pravatar.cc/400?u=${encodeURIComponent(user?.email || user?.name || 'user')}`}
+                alt={user?.name}
+                className="w-full h-full object-cover object-top"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+            </div>
+            <div className="p-5">
+              <h2 className="text-xl font-display font-bold text-foreground">{user?.name}</h2>
+              <p className="text-muted-foreground font-medium mt-0.5 capitalize text-sm">{user?.job_title || user?.role.replace('_', ' ')}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">{userDepartmentName}</p>
+              <button 
+                onClick={() => setLocation('/messages')}
+                className="mt-4 flex items-center justify-center w-full gap-2 bg-primary hover:bg-primary/90 text-primary-foreground py-2.5 px-4 rounded-xl font-medium transition-colors shadow-sm text-sm"
+              >
+                <MessageSquare className="w-4 h-4" />
+                View Messages
+              </button>
+            </div>
           </div>
 
-          {/* Department Members */}
-          <div className="bg-card border border-border/50 rounded-2xl p-6 shadow-sm">
-            <div className="flex items-center justify-between mb-4">
+          {/* Department Members — photos on left, names on right, stacked top to bottom */}
+          <div className="bg-card border border-border/50 rounded-2xl overflow-hidden shadow-sm">
+            <div className="px-5 pt-5 pb-3 flex items-center justify-between">
               <h3 className="font-display font-bold text-foreground">Department Members</h3>
               <span className="text-xs font-semibold bg-primary/10 text-primary px-2 py-1 rounded-md">{deptMembers.length}</span>
             </div>
-            
-            <div className="space-y-4">
-              {displayedMembers.length > 0 ? (
-                displayedMembers.map(member => (
+
+            {displayedMembers.length > 0 ? (
+              <div className="divide-y divide-border/40">
+                {displayedMembers.map((member) => (
                   <div 
                     key={member.id}
                     onClick={() => setLocation(`/messages?user=${member.id}`)}
-                    className="flex items-center gap-3 cursor-pointer group hover:bg-slate-50 p-2 -mx-2 rounded-xl transition-colors"
+                    className="flex items-stretch cursor-pointer group hover:bg-primary/5 transition-colors"
                   >
-                    <img 
-                      src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(member.name)}`} 
-                      alt={member.name}
-                      className="w-10 h-10 rounded-full bg-slate-100"
-                    />
-                    <div className="flex-1 min-w-0">
+                    {/* Photo fills the left edge, top to bottom of each row */}
+                    <div className="w-16 flex-shrink-0 overflow-hidden">
+                      <img 
+                        src={`https://i.pravatar.cc/150?u=${encodeURIComponent(member.email || member.name)}`}
+                        alt={member.name}
+                        className="w-full h-full object-cover object-top min-h-[72px]"
+                      />
+                    </div>
+                    <div className="flex-1 px-4 py-4 min-w-0 self-center">
                       <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors truncate">{member.name}</p>
-                      <p className="text-xs text-muted-foreground truncate capitalize">{member.job_title || member.role.replace('_', ' ')}</p>
+                      <p className="text-xs text-muted-foreground truncate capitalize mt-0.5">{member.job_title || member.role.replace('_', ' ')}</p>
                     </div>
                   </div>
-                ))
-              ) : (
-                <p className="text-sm text-muted-foreground text-center py-4">No other members in your department.</p>
-              )}
-              
-              {remainingMembersCount > 0 && (
-                <div className="text-center pt-2">
-                  <p className="text-xs font-medium text-muted-foreground">+{remainingMembersCount} more members</p>
-                </div>
-              )}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground text-center py-6">No other members in your department.</p>
+            )}
+
+            {remainingMembersCount > 0 && (
+              <div className="text-center py-3 border-t border-border/40">
+                <p className="text-xs font-medium text-muted-foreground">+{remainingMembersCount} more members</p>
+              </div>
+            )}
           </div>
         </div>
 
