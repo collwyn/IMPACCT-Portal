@@ -6,12 +6,12 @@ import { useState } from "react";
 import { format } from "date-fns";
 
 const NAME_LOGO_OVERRIDES: Record<string, string> = {
-  "canva for nonprofits": "https://logo.clearbit.com/canva.com",
-  "mailchimp": "https://logo.clearbit.com/mailchimp.com",
-  "google workspace (admin console)": "https://logo.clearbit.com/google.com",
-  "fluxx grantee portal": "https://logo.clearbit.com/fluxx.io",
-  "nyc hpd affordable housing connect": "https://logo.clearbit.com/nyc.gov",
-  "nyc small business services — business toolbox": "https://logo.clearbit.com/nyc.gov",
+  "canva for nonprofits": "/logos/canva.png",
+  "mailchimp": "/logos/mailchimp.png",
+  "google workspace (admin console)": "/logos/google.png",
+  "fluxx grantee portal": "/logos/fluxx.png",
+  "nyc hpd affordable housing connect": "/logos/nyc.png",
+  "nyc small business services — business toolbox": "/logos/nyc.png",
 };
 
 function getRootDomain(url: string): string {
@@ -27,7 +27,7 @@ function getLogoUrl(url?: string | null, name?: string): string {
   if (url) {
     try {
       const rootDomain = getRootDomain(url);
-      return `https://logo.clearbit.com/${rootDomain}`;
+      return `https://www.google.com/s2/favicons?domain=${rootDomain}&sz=256`;
     } catch {}
   }
   return `https://ui-avatars.com/api/?name=${encodeURIComponent(name?.slice(0, 2) || "R")}&background=2E7D4F&color=ffffff&size=200&bold=true&font-size=0.45`;
@@ -103,7 +103,15 @@ export default function ResourcesList() {
                   className="w-full h-full object-contain p-6"
                   onError={(e) => {
                     const target = e.currentTarget;
-                    target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(resource.name.slice(0, 2))}&background=2E7D4F&color=ffffff&size=200&bold=true&font-size=0.45`;
+                    const initials = `https://ui-avatars.com/api/?name=${encodeURIComponent(resource.name.slice(0, 2))}&background=2E7D4F&color=ffffff&size=200&bold=true&font-size=0.45`;
+                    if (resource.url && !target.src.includes("google.com/s2") && !target.src.includes("ui-avatars")) {
+                      try {
+                        const rootDomain = getRootDomain(resource.url);
+                        target.src = `https://www.google.com/s2/favicons?domain=${rootDomain}&sz=256`;
+                      } catch { target.src = initials; }
+                    } else {
+                      target.src = initials;
+                    }
                   }}
                 />
               </div>
