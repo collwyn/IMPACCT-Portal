@@ -5,11 +5,29 @@ import { Plus, Search, ExternalLink, Filter } from "lucide-react";
 import { useState } from "react";
 import { format } from "date-fns";
 
+const NAME_LOGO_OVERRIDES: Record<string, string> = {
+  "canva for nonprofits": "https://logo.clearbit.com/canva.com",
+  "mailchimp": "https://logo.clearbit.com/mailchimp.com",
+  "google workspace (admin console)": "https://logo.clearbit.com/google.com",
+  "fluxx grantee portal": "https://logo.clearbit.com/fluxx.io",
+  "nyc hpd affordable housing connect": "https://logo.clearbit.com/nyc.gov",
+  "nyc small business services — business toolbox": "https://logo.clearbit.com/nyc.gov",
+};
+
+function getRootDomain(url: string): string {
+  const hostname = new URL(url).hostname.replace(/^www\./, "");
+  const parts = hostname.split(".");
+  return parts.length > 2 ? parts.slice(-2).join(".") : hostname;
+}
+
 function getLogoUrl(url?: string | null, name?: string): string {
+  const nameKey = (name || "").toLowerCase();
+  if (NAME_LOGO_OVERRIDES[nameKey]) return NAME_LOGO_OVERRIDES[nameKey];
+
   if (url) {
     try {
-      const domain = new URL(url).hostname.replace(/^www\./, "");
-      return `https://logo.clearbit.com/${domain}`;
+      const rootDomain = getRootDomain(url);
+      return `https://logo.clearbit.com/${rootDomain}`;
     } catch {}
   }
   return `https://ui-avatars.com/api/?name=${encodeURIComponent(name?.slice(0, 2) || "R")}&background=2E7D4F&color=ffffff&size=200&bold=true&font-size=0.45`;
