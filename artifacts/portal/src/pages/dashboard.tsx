@@ -152,7 +152,7 @@ export default function Dashboard() {
                 <h3 className="text-xl font-display font-bold">Need to share something?</h3>
               </div>
               <Link href="/submissions/new" className="relative z-10 inline-flex items-center gap-2 text-sm font-semibold bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg transition-colors w-max">
-                Create Submission
+                Create submission for website update
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
