@@ -1,22 +1,33 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: IMPACCT Brooklyn Content Submission Portal API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: auth
+    description: Authentication
+  - name: users
+    description: User management (admin only)
+  - name: departments
+    description: Department management (admin only)
+  - name: submissions
+    description: Content submissions
+  - name: resources
+    description: Resource directory
+  - name: resourceCategories
+    description: Resource category management
+
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +35,504 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Login with email and password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginBody"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthUser"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      summary: Logout current session
+      responses:
+        "200":
+          description: Logged out
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /auth/me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      summary: Get current session user
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthUser"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /users:
+    get:
+      operationId: listUsers
+      tags: [users]
+      summary: List all users (admin only)
+      responses:
+        "200":
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+    post:
+      operationId: createUser
+      tags: [users]
+      summary: Create a user (admin only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserBody"
+      responses:
+        "201":
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /users/{id}:
+    patch:
+      operationId: updateUser
+      tags: [users]
+      summary: Update a user (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserBody"
+      responses:
+        "200":
+          description: User updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      operationId: deleteUser
+      tags: [users]
+      summary: Delete a user (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: User deleted
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /departments:
+    get:
+      operationId: listDepartments
+      tags: [departments]
+      summary: List all departments
+      responses:
+        "200":
+          description: List of departments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Department"
+    post:
+      operationId: createDepartment
+      tags: [departments]
+      summary: Create a department (admin only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateDepartmentBody"
+      responses:
+        "201":
+          description: Department created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Department"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /departments/{id}:
+    patch:
+      operationId: updateDepartment
+      tags: [departments]
+      summary: Update a department (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateDepartmentBody"
+      responses:
+        "200":
+          description: Department updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Department"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /submissions:
+    get:
+      operationId: listSubmissions
+      tags: [submissions]
+      summary: List submissions (filtered by role)
+      responses:
+        "200":
+          description: List of submissions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Submission"
+    post:
+      operationId: createSubmission
+      tags: [submissions]
+      summary: Create a submission
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSubmissionBody"
+      responses:
+        "201":
+          description: Submission created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Submission"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /submissions/{id}:
+    get:
+      operationId: getSubmission
+      tags: [submissions]
+      summary: Get a single submission with history
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Submission detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SubmissionDetail"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /submissions/{id}/status:
+    patch:
+      operationId: updateSubmissionStatus
+      tags: [submissions]
+      summary: Update submission status (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateSubmissionStatusBody"
+      responses:
+        "200":
+          description: Status updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Submission"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /resources:
+    get:
+      operationId: listResources
+      tags: [resources]
+      summary: List all resources
+      responses:
+        "200":
+          description: List of resources
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Resource"
+    post:
+      operationId: createResource
+      tags: [resources]
+      summary: Add a resource (any authenticated user)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateResourceBody"
+      responses:
+        "201":
+          description: Resource created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Resource"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /resources/{id}:
+    patch:
+      operationId: updateResource
+      tags: [resources]
+      summary: Edit a resource (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateResourceBody"
+      responses:
+        "200":
+          description: Resource updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Resource"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      operationId: deleteResource
+      tags: [resources]
+      summary: Archive/delete a resource (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Resource deleted
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /resource-categories:
+    get:
+      operationId: listResourceCategories
+      tags: [resourceCategories]
+      summary: List active resource categories
+      responses:
+        "200":
+          description: List of active categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ResourceCategory"
+
+  /resource-categories/suggest:
+    post:
+      operationId: suggestResourceCategory
+      tags: [resourceCategories]
+      summary: Suggest a new resource category
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SuggestCategoryBody"
+      responses:
+        "201":
+          description: Category suggestion submitted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourceCategory"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /resource-categories/pending:
+    get:
+      operationId: listPendingResourceCategories
+      tags: [resourceCategories]
+      summary: List pending resource categories (admin only)
+      responses:
+        "200":
+          description: List of pending categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ResourceCategory"
+
+  /resource-categories/{id}/approve:
+    patch:
+      operationId: approveResourceCategory
+      tags: [resourceCategories]
+      summary: Approve a pending resource category (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Category approved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourceCategory"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /resource-categories/{id}:
+    delete:
+      operationId: deleteResourceCategory
+      tags: [resourceCategories]
+      summary: Delete a resource category (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Category deleted
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +543,443 @@ components:
       required:
         - status
 
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+
+    MessageResponse:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+        - message
+
+    LoginBody:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      required:
+        - email
+        - password
+
+    AuthUser:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+          enum: [admin, department_head, staff]
+        department_id:
+          type: ["integer", "null"]
+        created_at:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - email
+        - role
+        - created_at
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+          enum: [admin, department_head, staff]
+        department_id:
+          type: ["integer", "null"]
+        created_at:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - email
+        - role
+        - created_at
+
+    CreateUserBody:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+          enum: [admin, department_head, staff]
+        department_id:
+          type: ["integer", "null"]
+      required:
+        - name
+        - email
+        - password
+        - role
+
+    UpdateUserBody:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+          enum: [admin, department_head, staff]
+        department_id:
+          type: ["integer", "null"]
+
+    Department:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        contact_email:
+          type: ["string", "null"]
+        active:
+          type: ["boolean", "null"]
+        created_at:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - created_at
+
+    CreateDepartmentBody:
+      type: object
+      properties:
+        name:
+          type: string
+        contact_email:
+          type: ["string", "null"]
+        active:
+          type: ["boolean", "null"]
+      required:
+        - name
+
+    UpdateDepartmentBody:
+      type: object
+      properties:
+        name:
+          type: string
+        contact_email:
+          type: ["string", "null"]
+        active:
+          type: ["boolean", "null"]
+
+    Submission:
+      type: object
+      properties:
+        id:
+          type: integer
+        department_id:
+          type: integer
+        submitted_by:
+          type: integer
+        content_type:
+          type: string
+          enum: [event, program_update, staff_change, resource, news]
+        headline:
+          type: string
+        body:
+          type: string
+        link:
+          type: ["string", "null"]
+        attachment_url:
+          type: ["string", "null"]
+        requested_publish_date:
+          type: ["string", "null"]
+          format: date
+        status:
+          type: string
+          enum: [pending, published, needs_revision]
+        admin_notes:
+          type: ["string", "null"]
+        submitted_at:
+          type: string
+          format: date-time
+        published_at:
+          type: ["string", "null"]
+          format: date-time
+        submitter_name:
+          type: ["string", "null"]
+        department_name:
+          type: ["string", "null"]
+      required:
+        - id
+        - department_id
+        - submitted_by
+        - content_type
+        - headline
+        - body
+        - status
+        - submitted_at
+
+    SubmissionDetail:
+      type: object
+      properties:
+        id:
+          type: integer
+        department_id:
+          type: integer
+        submitted_by:
+          type: integer
+        content_type:
+          type: string
+          enum: [event, program_update, staff_change, resource, news]
+        headline:
+          type: string
+        body:
+          type: string
+        link:
+          type: ["string", "null"]
+        attachment_url:
+          type: ["string", "null"]
+        requested_publish_date:
+          type: ["string", "null"]
+          format: date
+        status:
+          type: string
+          enum: [pending, published, needs_revision]
+        admin_notes:
+          type: ["string", "null"]
+        submitted_at:
+          type: string
+          format: date-time
+        published_at:
+          type: ["string", "null"]
+          format: date-time
+        submitter_name:
+          type: ["string", "null"]
+        department_name:
+          type: ["string", "null"]
+        history:
+          type: array
+          items:
+            $ref: "#/components/schemas/StatusHistory"
+      required:
+        - id
+        - department_id
+        - submitted_by
+        - content_type
+        - headline
+        - body
+        - status
+        - submitted_at
+        - history
+
+    StatusHistory:
+      type: object
+      properties:
+        id:
+          type: integer
+        submission_id:
+          type: integer
+        changed_by:
+          type: integer
+        old_status:
+          type: ["string", "null"]
+        new_status:
+          type: string
+        note:
+          type: ["string", "null"]
+        changed_at:
+          type: string
+          format: date-time
+        changed_by_name:
+          type: ["string", "null"]
+      required:
+        - id
+        - submission_id
+        - changed_by
+        - new_status
+        - changed_at
+
+    CreateSubmissionBody:
+      type: object
+      properties:
+        department_id:
+          type: integer
+        content_type:
+          type: string
+          enum: [event, program_update, staff_change, resource, news]
+        headline:
+          type: string
+        body:
+          type: string
+        link:
+          type: ["string", "null"]
+        attachment_url:
+          type: ["string", "null"]
+        requested_publish_date:
+          type: ["string", "null"]
+          format: date
+      required:
+        - department_id
+        - content_type
+        - headline
+        - body
+
+    UpdateSubmissionStatusBody:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [pending, published, needs_revision]
+        admin_notes:
+          type: ["string", "null"]
+        note:
+          type: ["string", "null"]
+      required:
+        - status
+
+    Resource:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        category_id:
+          type: integer
+        description:
+          type: ["string", "null"]
+        url:
+          type: ["string", "null"]
+        login_info_location:
+          type: ["string", "null"]
+        access_level:
+          type: string
+          enum: [everyone, department, leadership]
+        cost:
+          type: ["string", "null"]
+        renewal_date:
+          type: ["string", "null"]
+          format: date
+        added_by:
+          type: integer
+        notes:
+          type: ["string", "null"]
+        created_at:
+          type: string
+          format: date-time
+        category_name:
+          type: ["string", "null"]
+        added_by_name:
+          type: ["string", "null"]
+      required:
+        - id
+        - name
+        - category_id
+        - access_level
+        - added_by
+        - created_at
+
+    CreateResourceBody:
+      type: object
+      properties:
+        name:
+          type: string
+        category_id:
+          type: integer
+        description:
+          type: ["string", "null"]
+        url:
+          type: ["string", "null"]
+        login_info_location:
+          type: ["string", "null"]
+        access_level:
+          type: string
+          enum: [everyone, department, leadership]
+        cost:
+          type: ["string", "null"]
+        renewal_date:
+          type: ["string", "null"]
+          format: date
+        notes:
+          type: ["string", "null"]
+      required:
+        - name
+        - category_id
+
+    UpdateResourceBody:
+      type: object
+      properties:
+        name:
+          type: string
+        category_id:
+          type: integer
+        description:
+          type: ["string", "null"]
+        url:
+          type: ["string", "null"]
+        login_info_location:
+          type: ["string", "null"]
+        access_level:
+          type: string
+          enum: [everyone, department, leadership]
+        cost:
+          type: ["string", "null"]
+        renewal_date:
+          type: ["string", "null"]
+          format: date
+        notes:
+          type: ["string", "null"]
+
+    ResourceCategory:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        status:
+          type: string
+          enum: [active, pending]
+        suggested_by:
+          type: ["integer", "null"]
+        approved_by:
+          type: ["integer", "null"]
+        created_at:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - status
+        - created_at
+
+    SuggestCategoryBody:
+      type: object
+      properties:
+        name:
+          type: string
+      required:
+        - name

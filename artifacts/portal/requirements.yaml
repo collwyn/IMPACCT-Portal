@@ -1,0 +1,14 @@
+packages:
+  "date-fns": "For formatting dates in a human-readable way across the dashboard, submissions, and history logs."
+  "clsx": "Utility for constructing className strings conditionally."
+  "tailwind-merge": "Utility to safely merge Tailwind CSS classes without style conflicts."
+  "framer-motion": "For smooth page transitions, list animations, and elevated UI interactions."
+
+images:
+  - path: "artifacts/portal/public/images/login-hero.png"
+    description: "Abstract architectural background with soft geometric shapes in deep navy blue and teal, conveying trust, structure, and professional community support"
+    aspect_ratio: "16:9"
+
+notes:
+  - Using generated hooks from @workspace/api-client-react for all data fetching.
+  - Assuming standard Shadcn UI components exist in the workspace, or falling back to raw Tailwind if complex.
