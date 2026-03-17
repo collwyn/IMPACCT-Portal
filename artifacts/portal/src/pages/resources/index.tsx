@@ -5,6 +5,16 @@ import { Plus, Search, ExternalLink, Filter } from "lucide-react";
 import { useState } from "react";
 import { format } from "date-fns";
 
+function getLogoUrl(url?: string | null, name?: string): string {
+  if (url) {
+    try {
+      const domain = new URL(url).hostname.replace(/^www\./, "");
+      return `https://logo.clearbit.com/${domain}`;
+    } catch {}
+  }
+  return `https://ui-avatars.com/api/?name=${encodeURIComponent(name?.slice(0, 2) || "R")}&background=2E7D4F&color=ffffff&size=200&bold=true&font-size=0.45`;
+}
+
 export default function ResourcesList() {
   const { data: resources = [], isLoading: loadingRes } = useListResources();
   const { data: categories = [] } = useListResourceCategories();
@@ -66,44 +76,60 @@ export default function ResourcesList() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filtered.map(resource => (
-            <div key={resource.id} className="bg-card rounded-2xl border border-border/50 p-6 shadow-sm hover:shadow-md transition-all group flex flex-col h-full">
-              <div className="flex items-start justify-between mb-4">
-                <span className="px-3 py-1 bg-slate-100 text-slate-700 text-xs font-semibold rounded-full uppercase tracking-wider">
-                  {resource.category_name}
-                </span>
-                <span className={`px-2 py-1 text-[10px] font-bold uppercase rounded border
-                  ${resource.access_level === 'everyone' ? 'bg-blue-50 text-blue-700 border-blue-200' :
-                    resource.access_level === 'department' ? 'bg-purple-50 text-purple-700 border-purple-200' :
-                    'bg-orange-50 text-orange-700 border-orange-200'}`}
-                >
-                  {resource.access_level}
-                </span>
+            <div key={resource.id} className="bg-card rounded-2xl border border-border/50 shadow-sm hover:shadow-md transition-all group flex flex-col overflow-hidden">
+              {/* Logo — fills top half */}
+              <div className="h-44 w-full bg-slate-50 flex items-center justify-center overflow-hidden border-b border-border/40 relative">
+                <img
+                  src={getLogoUrl(resource.url, resource.name)}
+                  alt={`${resource.name} logo`}
+                  className="w-full h-full object-contain p-6"
+                  onError={(e) => {
+                    const target = e.currentTarget;
+                    target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(resource.name.slice(0, 2))}&background=2E7D4F&color=ffffff&size=200&bold=true&font-size=0.45`;
+                  }}
+                />
               </div>
-              
-              <h3 className="text-xl font-display font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
-                {resource.name}
-              </h3>
-              
-              <p className="text-sm text-muted-foreground mb-6 flex-1 line-clamp-3">
-                {resource.description || "No description provided."}
-              </p>
 
-              <div className="pt-4 border-t border-border/50 mt-auto flex items-center justify-between">
-                <div className="text-xs text-muted-foreground">
-                  {resource.cost && <span className="block font-medium text-foreground">Cost: {resource.cost}</span>}
-                  {resource.renewal_date && <span>Renews: {format(new Date(resource.renewal_date), 'MMM yyyy')}</span>}
-                </div>
-                {resource.url && (
-                  <a 
-                    href={resource.url} 
-                    target="_blank" 
-                    rel="noreferrer"
-                    className="flex items-center gap-1.5 text-sm font-semibold text-primary hover:bg-primary/10 px-3 py-1.5 rounded-lg transition-colors"
+              {/* Content */}
+              <div className="p-5 flex flex-col flex-1">
+                <div className="flex items-start justify-between mb-3">
+                  <span className="px-2.5 py-1 bg-slate-100 text-slate-700 text-xs font-semibold rounded-full uppercase tracking-wider">
+                    {resource.category_name}
+                  </span>
+                  <span className={`px-2 py-1 text-[10px] font-bold uppercase rounded border
+                    ${resource.access_level === 'everyone' ? 'bg-blue-50 text-blue-700 border-blue-200' :
+                      resource.access_level === 'department' ? 'bg-purple-50 text-purple-700 border-purple-200' :
+                      'bg-orange-50 text-orange-700 border-orange-200'}`}
                   >
-                    Open
-                    <ExternalLink className="w-4 h-4" />
-                  </a>
-                )}
+                    {resource.access_level}
+                  </span>
+                </div>
+
+                <h3 className="text-lg font-display font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
+                  {resource.name}
+                </h3>
+
+                <p className="text-sm text-muted-foreground mb-4 flex-1 line-clamp-3">
+                  {resource.description || "No description provided."}
+                </p>
+
+                <div className="pt-4 border-t border-border/50 mt-auto flex items-center justify-between">
+                  <div className="text-xs text-muted-foreground">
+                    {resource.cost && <span className="block font-medium text-foreground">Cost: {resource.cost}</span>}
+                    {resource.renewal_date && <span>Renews: {format(new Date(resource.renewal_date), 'MMM yyyy')}</span>}
+                  </div>
+                  {resource.url && (
+                    <a
+                      href={resource.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex items-center gap-1.5 text-sm font-semibold text-primary hover:bg-primary/10 px-3 py-1.5 rounded-lg transition-colors"
+                    >
+                      Open
+                      <ExternalLink className="w-4 h-4" />
+                    </a>
+                  )}
+                </div>
               </div>
             </div>
           ))}

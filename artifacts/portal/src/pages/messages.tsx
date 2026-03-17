@@ -124,28 +124,26 @@ export default function Messages() {
                     key={member.id}
                     onClick={() => setSelectedUserId(member.id)}
                     className={cn(
-                      "w-full flex items-center gap-3 p-3 rounded-xl transition-all duration-200 text-left",
-                      isSelected 
-                        ? "bg-primary text-primary-foreground shadow-md" 
+                      "w-full flex items-stretch rounded-xl overflow-hidden transition-all duration-200 text-left",
+                      isSelected
+                        ? "bg-primary shadow-md"
                         : "hover:bg-slate-100"
                     )}
                   >
-                    <div className="relative">
-                      <img 
-                        src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(member.name)}`} 
+                    {/* Photo flush to left, fills full row height */}
+                    <div className="w-14 flex-shrink-0 relative overflow-hidden min-h-[64px]">
+                      <img
+                        src={`https://i.pravatar.cc/150?u=${encodeURIComponent(member.email || member.name)}`}
                         alt={member.name}
-                        className={cn(
-                          "w-10 h-10 rounded-full",
-                          isSelected ? "bg-primary-foreground/20" : "bg-slate-200"
-                        )}
+                        className="w-full h-full object-cover object-top absolute inset-0"
                       />
                       {unreadCount > 0 && (
-                        <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-card">
+                        <span className="absolute top-1 right-1 bg-destructive text-destructive-foreground text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-card z-10">
                           {unreadCount}
                         </span>
                       )}
                     </div>
-                    <div className="flex-1 min-w-0">
+                    <div className="flex-1 px-3 py-3 min-w-0 self-center">
                       <p className={cn(
                         "text-sm font-semibold truncate",
                         isSelected ? "text-primary-foreground" : "text-foreground"
@@ -153,7 +151,7 @@ export default function Messages() {
                         {member.name}
                       </p>
                       <p className={cn(
-                        "text-xs truncate capitalize",
+                        "text-xs truncate capitalize mt-0.5",
                         isSelected ? "text-primary-foreground/80" : "text-muted-foreground"
                       )}>
                         {member.job_title || member.role.replace('_', ' ')}
@@ -176,10 +174,10 @@ export default function Messages() {
             <>
               {/* Thread Header */}
               <div className="p-4 border-b border-border/50 flex items-center gap-3 bg-card/50 backdrop-blur-sm z-10 sticky top-0">
-                <img 
-                  src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(selectedUser?.name || '')}`} 
+                <img
+                  src={`https://i.pravatar.cc/80?u=${encodeURIComponent(selectedUser?.email || selectedUser?.name || '')}`}
                   alt={selectedUser?.name}
-                  className="w-10 h-10 rounded-full bg-slate-100"
+                  className="w-10 h-10 rounded-full object-cover object-top bg-slate-100"
                 />
                 <div>
                   <h3 className="font-semibold text-foreground">{selectedUser?.name}</h3>
