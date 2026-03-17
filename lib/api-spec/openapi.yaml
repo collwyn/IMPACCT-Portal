@@ -432,6 +432,99 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
 
+  /users/department:
+    get:
+      operationId: getDepartmentUsers
+      tags: [users]
+      summary: Get all users in the current user's department
+      responses:
+        "200":
+          description: List of users in same department
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+
+  /messages:
+    get:
+      operationId: listMessages
+      tags: [messages]
+      summary: Get messages inbox for current user
+      responses:
+        "200":
+          description: List of messages (sent and received)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MessageWithSender"
+    post:
+      operationId: sendMessage
+      tags: [messages]
+      summary: Send a direct message to a department member
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SendMessageBody"
+      responses:
+        "201":
+          description: Message sent
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageWithSender"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /messages/thread/{userId}:
+    get:
+      operationId: getMessageThread
+      tags: [messages]
+      summary: Get conversation thread with a specific user
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Thread messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MessageWithSender"
+
+  /messages/{id}/read:
+    patch:
+      operationId: markMessageRead
+      tags: [messages]
+      summary: Mark a message as read
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Message marked as read
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageWithSender"
+
   /resource-categories:
     get:
       operationId: listResourceCategories
@@ -584,6 +677,8 @@ components:
           enum: [admin, department_head, staff]
         department_id:
           type: ["integer", "null"]
+        job_title:
+          type: ["string", "null"]
         created_at:
           type: string
           format: date-time
@@ -608,6 +703,8 @@ components:
           enum: [admin, department_head, staff]
         department_id:
           type: ["integer", "null"]
+        job_title:
+          type: ["string", "null"]
         created_at:
           type: string
           format: date-time
@@ -652,6 +749,49 @@ components:
           enum: [admin, department_head, staff]
         department_id:
           type: ["integer", "null"]
+        job_title:
+          type: ["string", "null"]
+
+    MessageWithSender:
+      type: object
+      properties:
+        id:
+          type: integer
+        sender_id:
+          type: integer
+        recipient_id:
+          type: integer
+        body:
+          type: string
+        is_read:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+        sender_name:
+          type: string
+        recipient_name:
+          type: string
+      required:
+        - id
+        - sender_id
+        - recipient_id
+        - body
+        - is_read
+        - created_at
+        - sender_name
+        - recipient_name
+
+    SendMessageBody:
+      type: object
+      properties:
+        recipient_id:
+          type: integer
+        body:
+          type: string
+      required:
+        - recipient_id
+        - body
 
     Department:
       type: object

@@ -28,6 +28,7 @@ export const LoginResponse = zod.object({
   email: zod.string(),
   role: zod.enum(["admin", "department_head", "staff"]),
   department_id: zod.number().nullish(),
+  job_title: zod.string().nullish(),
   created_at: zod.date(),
 });
 
@@ -47,6 +48,7 @@ export const GetMeResponse = zod.object({
   email: zod.string(),
   role: zod.enum(["admin", "department_head", "staff"]),
   department_id: zod.number().nullish(),
+  job_title: zod.string().nullish(),
   created_at: zod.date(),
 });
 
@@ -59,6 +61,7 @@ export const ListUsersResponseItem = zod.object({
   email: zod.string(),
   role: zod.enum(["admin", "department_head", "staff"]),
   department_id: zod.number().nullish(),
+  job_title: zod.string().nullish(),
   created_at: zod.date(),
 });
 export const ListUsersResponse = zod.array(ListUsersResponseItem);
@@ -87,6 +90,7 @@ export const UpdateUserBody = zod.object({
   password: zod.string().optional(),
   role: zod.enum(["admin", "department_head", "staff"]).optional(),
   department_id: zod.number().nullish(),
+  job_title: zod.string().nullish(),
 });
 
 export const UpdateUserResponse = zod.object({
@@ -95,6 +99,7 @@ export const UpdateUserResponse = zod.object({
   email: zod.string(),
   role: zod.enum(["admin", "department_head", "staff"]),
   department_id: zod.number().nullish(),
+  job_title: zod.string().nullish(),
   created_at: zod.date(),
 });
 
@@ -351,6 +356,82 @@ export const UpdateResourceResponse = zod.object({
  */
 export const DeleteResourceParams = zod.object({
   id: zod.coerce.number(),
+});
+
+/**
+ * @summary Get all users in the current user's department
+ */
+export const GetDepartmentUsersResponseItem = zod.object({
+  id: zod.number(),
+  name: zod.string(),
+  email: zod.string(),
+  role: zod.enum(["admin", "department_head", "staff"]),
+  department_id: zod.number().nullish(),
+  job_title: zod.string().nullish(),
+  created_at: zod.date(),
+});
+export const GetDepartmentUsersResponse = zod.array(
+  GetDepartmentUsersResponseItem,
+);
+
+/**
+ * @summary Get messages inbox for current user
+ */
+export const ListMessagesResponseItem = zod.object({
+  id: zod.number(),
+  sender_id: zod.number(),
+  recipient_id: zod.number(),
+  body: zod.string(),
+  is_read: zod.boolean(),
+  created_at: zod.date(),
+  sender_name: zod.string(),
+  recipient_name: zod.string(),
+});
+export const ListMessagesResponse = zod.array(ListMessagesResponseItem);
+
+/**
+ * @summary Send a direct message to a department member
+ */
+export const SendMessageBody = zod.object({
+  recipient_id: zod.number(),
+  body: zod.string(),
+});
+
+/**
+ * @summary Get conversation thread with a specific user
+ */
+export const GetMessageThreadParams = zod.object({
+  userId: zod.coerce.number(),
+});
+
+export const GetMessageThreadResponseItem = zod.object({
+  id: zod.number(),
+  sender_id: zod.number(),
+  recipient_id: zod.number(),
+  body: zod.string(),
+  is_read: zod.boolean(),
+  created_at: zod.date(),
+  sender_name: zod.string(),
+  recipient_name: zod.string(),
+});
+export const GetMessageThreadResponse = zod.array(GetMessageThreadResponseItem);
+
+/**
+ * @summary Mark a message as read
+ */
+export const MarkMessageReadParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const MarkMessageReadResponse = zod.object({
+  id: zod.number(),
+  sender_id: zod.number(),
+  recipient_id: zod.number(),
+  body: zod.string(),
+  is_read: zod.boolean(),
+  created_at: zod.date(),
+  sender_name: zod.string(),
+  recipient_name: zod.string(),
 });
 
 /**

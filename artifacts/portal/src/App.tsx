@@ -15,6 +15,7 @@ import NewResource from "@/pages/resources/new";
 import AdminUsers from "@/pages/admin/users";
 import AdminDepartments from "@/pages/admin/departments";
 import AdminCategories from "@/pages/admin/categories";
+import Messages from "@/pages/messages";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,8 @@ function Router() {
       <Route path="/login" component={Login} />
       <Route path="/dashboard" component={Dashboard} />
       
+      <Route path="/messages" component={Messages} />
+
       <Route path="/submissions" component={SubmissionsList} />
       <Route path="/submissions/new" component={NewSubmission} />
       <Route path="/submissions/:id" component={SubmissionDetail} />

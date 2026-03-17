@@ -37,6 +37,8 @@ export interface AuthUser {
   role: AuthUserRole;
   /** @nullable */
   department_id?: number | null;
+  /** @nullable */
+  job_title?: string | null;
   created_at: string;
 }
 
@@ -55,6 +57,8 @@ export interface User {
   role: UserRole;
   /** @nullable */
   department_id?: number | null;
+  /** @nullable */
+  job_title?: string | null;
   created_at: string;
 }
 
@@ -92,6 +96,24 @@ export interface UpdateUserBody {
   role?: UpdateUserBodyRole;
   /** @nullable */
   department_id?: number | null;
+  /** @nullable */
+  job_title?: string | null;
+}
+
+export interface MessageWithSender {
+  id: number;
+  sender_id: number;
+  recipient_id: number;
+  body: string;
+  is_read: boolean;
+  created_at: string;
+  sender_name: string;
+  recipient_name: string;
+}
+
+export interface SendMessageBody {
+  recipient_id: number;
+  body: string;
 }
 
 export interface Department {

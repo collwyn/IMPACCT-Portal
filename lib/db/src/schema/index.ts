@@ -4,3 +4,4 @@ export * from "./submissions";
 export * from "./statusHistory";
 export * from "./resources";
 export * from "./resourceCategories";
+export * from "./messages";

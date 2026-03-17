@@ -27,8 +27,10 @@ import type {
   HealthStatus,
   LoginBody,
   MessageResponse,
+  MessageWithSender,
   Resource,
   ResourceCategory,
+  SendMessageBody,
   Submission,
   SubmissionDetail,
   SuggestCategoryBody,
@@ -1589,6 +1591,414 @@ export const useDeleteResource = <
   TContext
 > => {
   return useMutation(getDeleteResourceMutationOptions(options));
+};
+
+/**
+ * @summary Get all users in the current user's department
+ */
+export const getGetDepartmentUsersUrl = () => {
+  return `/api/users/department`;
+};
+
+export const getDepartmentUsers = async (
+  options?: RequestInit,
+): Promise<User[]> => {
+  return customFetch<User[]>(getGetDepartmentUsersUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetDepartmentUsersQueryKey = () => {
+  return [`/api/users/department`] as const;
+};
+
+export const getGetDepartmentUsersQueryOptions = <
+  TData = Awaited<ReturnType<typeof getDepartmentUsers>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getDepartmentUsers>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetDepartmentUsersQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getDepartmentUsers>>
+  > = ({ signal }) => getDepartmentUsers({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getDepartmentUsers>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetDepartmentUsersQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getDepartmentUsers>>
+>;
+export type GetDepartmentUsersQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Get all users in the current user's department
+ */
+
+export function useGetDepartmentUsers<
+  TData = Awaited<ReturnType<typeof getDepartmentUsers>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getDepartmentUsers>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetDepartmentUsersQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Get messages inbox for current user
+ */
+export const getListMessagesUrl = () => {
+  return `/api/messages`;
+};
+
+export const listMessages = async (
+  options?: RequestInit,
+): Promise<MessageWithSender[]> => {
+  return customFetch<MessageWithSender[]>(getListMessagesUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getListMessagesQueryKey = () => {
+  return [`/api/messages`] as const;
+};
+
+export const getListMessagesQueryOptions = <
+  TData = Awaited<ReturnType<typeof listMessages>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof listMessages>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getListMessagesQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof listMessages>>> = ({
+    signal,
+  }) => listMessages({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof listMessages>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type ListMessagesQueryResult = NonNullable<
+  Awaited<ReturnType<typeof listMessages>>
+>;
+export type ListMessagesQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Get messages inbox for current user
+ */
+
+export function useListMessages<
+  TData = Awaited<ReturnType<typeof listMessages>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof listMessages>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getListMessagesQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Send a direct message to a department member
+ */
+export const getSendMessageUrl = () => {
+  return `/api/messages`;
+};
+
+export const sendMessage = async (
+  sendMessageBody: SendMessageBody,
+  options?: RequestInit,
+): Promise<MessageWithSender> => {
+  return customFetch<MessageWithSender>(getSendMessageUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(sendMessageBody),
+  });
+};
+
+export const getSendMessageMutationOptions = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof sendMessage>>,
+    TError,
+    { data: BodyType<SendMessageBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof sendMessage>>,
+  TError,
+  { data: BodyType<SendMessageBody> },
+  TContext
+> => {
+  const mutationKey = ["sendMessage"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof sendMessage>>,
+    { data: BodyType<SendMessageBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return sendMessage(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type SendMessageMutationResult = NonNullable<
+  Awaited<ReturnType<typeof sendMessage>>
+>;
+export type SendMessageMutationBody = BodyType<SendMessageBody>;
+export type SendMessageMutationError = ErrorType<ErrorResponse>;
+
+/**
+ * @summary Send a direct message to a department member
+ */
+export const useSendMessage = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof sendMessage>>,
+    TError,
+    { data: BodyType<SendMessageBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof sendMessage>>,
+  TError,
+  { data: BodyType<SendMessageBody> },
+  TContext
+> => {
+  return useMutation(getSendMessageMutationOptions(options));
+};
+
+/**
+ * @summary Get conversation thread with a specific user
+ */
+export const getGetMessageThreadUrl = (userId: number) => {
+  return `/api/messages/thread/${userId}`;
+};
+
+export const getMessageThread = async (
+  userId: number,
+  options?: RequestInit,
+): Promise<MessageWithSender[]> => {
+  return customFetch<MessageWithSender[]>(getGetMessageThreadUrl(userId), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetMessageThreadQueryKey = (userId: number) => {
+  return [`/api/messages/thread/${userId}`] as const;
+};
+
+export const getGetMessageThreadQueryOptions = <
+  TData = Awaited<ReturnType<typeof getMessageThread>>,
+  TError = ErrorType<unknown>,
+>(
+  userId: number,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getMessageThread>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetMessageThreadQueryKey(userId);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getMessageThread>>
+  > = ({ signal }) => getMessageThread(userId, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!userId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getMessageThread>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetMessageThreadQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getMessageThread>>
+>;
+export type GetMessageThreadQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Get conversation thread with a specific user
+ */
+
+export function useGetMessageThread<
+  TData = Awaited<ReturnType<typeof getMessageThread>>,
+  TError = ErrorType<unknown>,
+>(
+  userId: number,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getMessageThread>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetMessageThreadQueryOptions(userId, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Mark a message as read
+ */
+export const getMarkMessageReadUrl = (id: number) => {
+  return `/api/messages/${id}/read`;
+};
+
+export const markMessageRead = async (
+  id: number,
+  options?: RequestInit,
+): Promise<MessageWithSender> => {
+  return customFetch<MessageWithSender>(getMarkMessageReadUrl(id), {
+    ...options,
+    method: "PATCH",
+  });
+};
+
+export const getMarkMessageReadMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof markMessageRead>>,
+    TError,
+    { id: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof markMessageRead>>,
+  TError,
+  { id: number },
+  TContext
+> => {
+  const mutationKey = ["markMessageRead"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof markMessageRead>>,
+    { id: number }
+  > = (props) => {
+    const { id } = props ?? {};
+
+    return markMessageRead(id, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type MarkMessageReadMutationResult = NonNullable<
+  Awaited<ReturnType<typeof markMessageRead>>
+>;
+
+export type MarkMessageReadMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Mark a message as read
+ */
+export const useMarkMessageRead = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof markMessageRead>>,
+    TError,
+    { id: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof markMessageRead>>,
+  TError,
+  { id: number },
+  TContext
+> => {
+  return useMutation(getMarkMessageReadMutationOptions(options));
 };
 
 /**

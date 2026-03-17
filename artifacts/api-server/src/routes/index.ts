@@ -6,6 +6,7 @@ import departmentsRouter from "./departments.js";
 import submissionsRouter from "./submissions.js";
 import resourcesRouter from "./resources.js";
 import resourceCategoriesRouter from "./resourceCategories.js";
+import messagesRouter from "./messages.js";
 
 const router: IRouter = Router();
 
@@ -16,5 +17,6 @@ router.use(departmentsRouter);
 router.use(submissionsRouter);
 router.use(resourcesRouter);
 router.use(resourceCategoriesRouter);
+router.use(messagesRouter);
 
 export default router;

@@ -65,6 +65,7 @@ passport.use(
         email: user.email,
         role: user.role,
         department_id: user.department_id,
+        job_title: user.job_title,
         created_at: user.created_at,
       });
     } catch (err) {
@@ -94,6 +95,7 @@ passport.deserializeUser(async (id: number, done) => {
       email: user.email,
       role: user.role,
       department_id: user.department_id,
+      job_title: user.job_title,
       created_at: user.created_at,
     });
   } catch (err) {

@@ -14,5 +14,7 @@ export interface User {
   role: UserRole;
   /** @nullable */
   department_id?: number | null;
+  /** @nullable */
+  job_title?: string | null;
   created_at: Date;
 }

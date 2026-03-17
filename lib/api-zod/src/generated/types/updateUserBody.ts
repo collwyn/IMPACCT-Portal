@@ -14,4 +14,6 @@ export interface UpdateUserBody {
   role?: UpdateUserBodyRole;
   /** @nullable */
   department_id?: number | null;
+  /** @nullable */
+  job_title?: string | null;
 }

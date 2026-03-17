@@ -8,16 +8,29 @@ import {
   Users, 
   Building2, 
   LogOut,
-  FolderPlus
+  FolderPlus,
+  MessageSquare
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useListMessages } from "@workspace/api-client-react";
 
 export function Sidebar() {
   const [location] = useLocation();
   const { user, isAdmin, isDeptHead, logout } = useAuth();
+  
+  const { data: messages = [] } = useListMessages({
+    query: {
+      refetchInterval: 5000,
+    }
+  });
+
+  const unreadMessagesCount = messages.filter(
+    m => !m.is_read && m.recipient_id === user?.id
+  ).length;
 
   const navItems = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard, show: true },
+    { name: "Messages", href: "/messages", icon: MessageSquare, show: true, badge: unreadMessagesCount },
     { name: "Submissions", href: "/submissions", icon: FileText, show: isAdmin || isDeptHead },
     { name: "New Submission", href: "/submissions/new", icon: Send, show: true },
     { name: "Resources", href: "/resources", icon: FolderOpen, show: true },
@@ -47,14 +60,21 @@ export function Sidebar() {
                 key={item.href} 
                 href={item.href}
                 className={cn(
-                  "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200",
-                  location === item.href || (location.startsWith(item.href) && item.href !== '/dashboard' && item.href !== '/submissions')
+                  "flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200",
+                  location === item.href || (location.startsWith(item.href) && item.href !== '/dashboard' && item.href !== '/submissions' && item.href !== '/messages')
                     ? "bg-primary/10 text-primary"
                     : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                 )}
               >
-                <item.icon className={cn("w-5 h-5", location === item.href ? "text-primary" : "text-muted-foreground")} />
-                {item.name}
+                <div className="flex items-center gap-3">
+                  <item.icon className={cn("w-5 h-5", location === item.href ? "text-primary" : "text-muted-foreground")} />
+                  {item.name}
+                </div>
+                {item.badge ? (
+                  <span className="bg-destructive text-destructive-foreground text-[10px] font-bold px-2 py-0.5 rounded-full min-w-[20px] text-center">
+                    {item.badge}
+                  </span>
+                ) : null}
               </Link>
             ))}
           </nav>

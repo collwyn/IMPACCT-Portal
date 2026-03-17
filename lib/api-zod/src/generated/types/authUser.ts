@@ -14,5 +14,7 @@ export interface AuthUser {
   role: AuthUserRole;
   /** @nullable */
   department_id?: number | null;
+  /** @nullable */
+  job_title?: string | null;
   created_at: Date;
 }

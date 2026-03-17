@@ -37,7 +37,7 @@ Internal staff portal for IMPACCT Brooklyn. Handles content submission workflow,
 
 ## Database Schema
 
-Tables: `departments`, `users`, `submissions`, `status_history`, `resources`, `resource_categories`, `session`
+Tables: `departments`, `users` (with `job_title` column), `submissions`, `status_history`, `resources`, `resource_categories`, `messages`, `session`
 
 ## Default Admin Credentials
 
