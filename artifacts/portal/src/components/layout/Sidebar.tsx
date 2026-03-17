@@ -44,9 +44,16 @@ export function Sidebar() {
 
   return (
     <div className="w-64 bg-sidebar border-r border-sidebar-border h-screen flex flex-col shadow-xl shadow-black/5 z-10 relative">
-      <div className="p-6 border-b border-sidebar-border">
-        <h1 className="text-xl font-display font-bold text-primary">IMPACCT Portal</h1>
-        <p className="text-xs text-muted-foreground mt-1 capitalize">{user?.role.replace('_', ' ')}</p>
+      <div className="px-5 pt-5 pb-4 border-b border-sidebar-border bg-white">
+        <img
+          src="/impacct-logo.jpg"
+          alt="IMPACCT Brooklyn"
+          className="w-full h-auto max-h-28 object-contain object-left"
+        />
+        <p className="text-[11px] font-semibold text-primary/70 uppercase tracking-widest mt-3">
+          Web Portal
+        </p>
+        <p className="text-[10px] text-muted-foreground capitalize">{user?.role.replace('_', ' ')}</p>
       </div>
 
       <div className="flex-1 overflow-y-auto py-6 px-4 space-y-8">

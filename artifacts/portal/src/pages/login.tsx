@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useLogin } from "@workspace/api-client-react";
 import { useLocation } from "wouter";
-import { Building, Loader2, ArrowRight } from "lucide-react";
+import { Loader2, ArrowRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 export default function Login() {
@@ -44,17 +44,18 @@ export default function Login() {
         <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/80 to-transparent z-0"></div>
         
         <div className="relative z-10">
-          <div className="flex items-center gap-3 text-white">
-            <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-md border border-white/20">
-              <Building className="w-6 h-6 text-white" />
-            </div>
-            <span className="font-display font-bold text-2xl tracking-tight">IMPACCT Brooklyn</span>
+          <div className="bg-white rounded-2xl px-5 py-4 inline-block shadow-lg">
+            <img
+              src="/impacct-logo.jpg"
+              alt="IMPACCT Brooklyn"
+              className="h-20 w-auto object-contain"
+            />
           </div>
         </div>
 
         <div className="relative z-10 max-w-md">
           <h1 className="text-4xl font-display font-bold text-white leading-tight mb-6">
-            Content & Resource Management Portal
+            IMPACCT Web Portal
           </h1>
           <p className="text-primary-foreground/80 text-lg">
             Streamlining our internal communications, event submissions, and shared resources to better serve our community.
