@@ -34,14 +34,14 @@ export default function Login() {
     <div className="min-h-screen flex w-full bg-background">
       {/* Left Pane - Branding */}
       <div className="hidden lg:flex flex-col justify-between w-1/2 bg-primary relative overflow-hidden p-12">
-        <div className="absolute inset-0 z-0 opacity-20 mix-blend-overlay">
-          <img 
-            src={`${import.meta.env.BASE_URL}images/login-hero.png`} 
-            alt="Hero background" 
+        <div className="absolute inset-0 z-0">
+          <img
+            src="/login-bg.jpg"
+            alt="Bedford Avenue, Brooklyn"
             className="w-full h-full object-cover"
           />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/80 to-transparent z-0"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-primary/95 via-primary/75 to-primary/50 z-0"></div>
         
         <div className="relative z-10">
           <div className="bg-white rounded-2xl px-5 py-4 inline-block shadow-lg">
