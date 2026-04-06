@@ -17,6 +17,9 @@ if (!process.env["SESSION_SECRET"]) {
 
 const app: Express = express();
 
+// Trust Replit's reverse proxy so secure cookies work over HTTPS in production
+app.set("trust proxy", 1);
+
 app.use(cors({
   origin: true,
   credentials: true,
@@ -37,6 +40,7 @@ app.use(
     cookie: {
       httpOnly: true,
       secure: process.env["NODE_ENV"] === "production",
+      sameSite: process.env["NODE_ENV"] === "production" ? "none" : "lax",
       maxAge: 1000 * 60 * 60 * 24 * 7,
     },
   })
