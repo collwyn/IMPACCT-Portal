@@ -1,5 +1,6 @@
 import express, { type Express } from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import session from "express-session";
 import connectPgSimple from "connect-pg-simple";
 import passport from "passport";
@@ -7,6 +8,7 @@ import { Strategy as LocalStrategy } from "passport-local";
 import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 import { db, usersTable, pool } from "@workspace/db";
+import { injectPersonaUser } from "./middleware/auth.js";
 import router from "./routes/index.js";
 
 const PgSession = connectPgSimple(session);
@@ -24,6 +26,7 @@ app.use(cors({
   origin: true,
   credentials: true,
 }));
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -109,6 +112,9 @@ passport.deserializeUser(async (id: number, done) => {
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+// Inject persona user from cookie so all routes work without a login session
+app.use(injectPersonaUser);
 
 app.use("/api", router);
 

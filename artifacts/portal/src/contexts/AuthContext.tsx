@@ -34,19 +34,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     logoutMutation.mutate();
   };
 
-  const publicPaths = ["/", "/login"];
-  const currentPath = window.location.pathname;
-
   useEffect(() => {
-    // If not authenticated and on a protected page, redirect to splash
-    if (!isLoading && error && !publicPaths.includes(currentPath)) {
+    // If not loading and there's an error (no user), redirect to splash
+    if (!isLoading && error) {
       setLocation("/");
     }
-    // If already logged in and on a public page, go to dashboard
-    if (!isLoading && user && publicPaths.includes(currentPath)) {
-      setLocation("/dashboard");
-    }
-  }, [isLoading, user, error, currentPath, setLocation]);
+  }, [isLoading, error, setLocation]);
 
   if (isLoading) {
     return (
