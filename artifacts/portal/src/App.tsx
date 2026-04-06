@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/contexts/AuthContext";
 
 // Pages
+import Splash from "@/pages/splash";
 import Login from "@/pages/login";
 import Dashboard from "@/pages/dashboard";
 import SubmissionsList from "@/pages/submissions/index";
@@ -23,7 +24,7 @@ const queryClient = new QueryClient();
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={Login} />
+      <Route path="/" component={Splash} />
       <Route path="/login" component={Login} />
       <Route path="/dashboard" component={Dashboard} />
       

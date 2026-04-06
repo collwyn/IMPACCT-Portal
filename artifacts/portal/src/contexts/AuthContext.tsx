@@ -25,7 +25,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logoutMutation = useLogout({
     mutation: {
       onSuccess: () => {
-        window.location.href = "/login";
+        window.location.href = "/";
       }
     }
   });
@@ -34,16 +34,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     logoutMutation.mutate();
   };
 
+  const publicPaths = ["/", "/login"];
+  const currentPath = window.location.pathname;
+
   useEffect(() => {
-    // If not loading and there's an error (401), and we are not on login, redirect
-    if (!isLoading && error && window.location.pathname !== "/login") {
-      setLocation("/login");
+    // If not authenticated and on a protected page, redirect to splash
+    if (!isLoading && error && !publicPaths.includes(currentPath)) {
+      setLocation("/");
     }
-    // If user exists and we are on login, redirect to dashboard
-    if (!isLoading && user && window.location.pathname === "/login") {
+    // If already logged in and on a public page, go to dashboard
+    if (!isLoading && user && publicPaths.includes(currentPath)) {
       setLocation("/dashboard");
     }
-  }, [isLoading, user, error, setLocation]);
+  }, [isLoading, user, error, currentPath, setLocation]);
 
   if (isLoading) {
     return (
