@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useLogin } from "@workspace/api-client-react";
-import { useLocation } from "wouter";
 import { Loader2, ArrowRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -13,7 +12,7 @@ export default function Login() {
   const loginMutation = useLogin({
     mutation: {
       onSuccess: () => {
-        setLocation("/dashboard");
+        window.location.href = "/dashboard";
       },
       onError: (error: any) => {
         toast({

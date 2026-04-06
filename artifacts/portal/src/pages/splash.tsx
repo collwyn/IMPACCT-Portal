@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useLocation } from "wouter";
 import { useLogin } from "@workspace/api-client-react";
 import { useToast } from "@/hooks/use-toast";
 import { Shield, Building2, User, ArrowRight, Loader2 } from "lucide-react";
@@ -42,14 +41,15 @@ const ROLES = [
 ];
 
 export default function Splash() {
-  const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [loadingKey, setLoadingKey] = useState<string | null>(null);
 
   const loginMutation = useLogin({
     mutation: {
       onSuccess: () => {
-        setLocation("/dashboard");
+        // Hard redirect so the auth state is fetched fresh — avoids the stale
+        // 401 cache in React Query bouncing the user back to the splash page.
+        window.location.href = "/dashboard";
       },
       onError: () => {
         setLoadingKey(null);
